@@ -1,4 +1,13 @@
-import { Cpf } from '../src/cpf';
+import { Cpf } from "../../src/domain/entity/cpf";
+
+test("create valid cpf", function () {
+    // arrange
+    const cpfEntryValue = "003.682.284-10";
+    // action
+    const cpf = new Cpf(cpfEntryValue);
+    // expect
+    expect(cpf.value).toBe(cpfEntryValue);
+});
 
 test("check invalid cpf - too short", function () {
     // arrange

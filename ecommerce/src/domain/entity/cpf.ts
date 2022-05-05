@@ -8,20 +8,20 @@ export class Cpf {
         this.value = value;
     }
 
-    private validateCpf (cpf: string) {
+    private validateCpf (rawCpf: string) {
 
-        if (this.isCpfLengthValid(cpf)){ // fix validation
+        if (this.isCpfLengthValid(rawCpf)){ // fix validation
 
-            const cpfPlainned = this.getPlainCpf(cpf);
+            const cpf = this.getPlainCpf(rawCpf);
 
-            if (!this.isCpfFirstDigitRepeatable(cpfPlainned)) {
+            if (!this.isCpfFirstDigitRepeatable(cpf)) {
                 const partialCpf = cpf.substring(0, 9);
 
                 const firstDigiteCalculated = this.calculateVerifiedDigit(partialCpf, 10);
                 const secondDigiteCalculated = this.calculateVerifiedDigit(partialCpf + firstDigiteCalculated, 11);
                 const digitesVerifiedResult = "" + firstDigiteCalculated + "" + secondDigiteCalculated;
                 
-                const digiteVerifiedOriginal = cpfPlainned.substring(cpfPlainned.length-2, cpfPlainned.length);  
+                const digiteVerifiedOriginal = cpf.substring(cpf.length-2, cpf.length);  
 
                 return digiteVerifiedOriginal === digitesVerifiedResult;
 
