@@ -63,3 +63,15 @@ test("It should create an order with 3 items and calculate the shipping", functi
 	expect(freight).toBe(260);
 	expect(total).toBe(6350);
 });
+
+test("It should create an order with 3 items and generate a code following the format AAAAPPPPPPPP", function () {
+	const order = new Order("935.411.347-80", new Date("2021-03-01T10:00:00"));
+	expect(order.code.value).toBe("202100000001");
+});
+
+test("It should throw an exception if item is already added", function () {
+    const order = new Order('216.046.930-02');
+    order.addItem(new Item(1, "Guitarra", 1000), 1);
+
+    expect(() => order.addItem(new Item(1, "Guitarra", 1000), 1)).toThrow(new Error("Duplicated item"));
+});

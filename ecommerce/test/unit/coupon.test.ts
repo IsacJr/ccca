@@ -6,13 +6,11 @@ test("It should create a coupon", function () {
 	expect(coupon.calculateDiscount(1000)).toBe(200);
 });
 
-test("It should create a valid coupon", function () {
+test("It should create an expired coupon", function () {
 	// arrange
-	const currentDate = new Date();
-	const dateMocked = new Date(currentDate.setDate(currentDate.getDate() - 3));
-	const coupon = new Coupon("20-OFF", 20, dateMocked);
+	const coupon = new Coupon("20-OFF", 20, new Date("2021-03-01T10:00:00"));
 
-	const isExpired = coupon.isExpired(new Date());
+	const isExpired = coupon.isExpired(new Date("2021-03-10T10:00:00"));
 
-	expect(isExpired).toBe(true);
+	expect(isExpired).toBeTruthy();
 });

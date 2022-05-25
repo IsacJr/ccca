@@ -3,11 +3,12 @@ import { OrderItem } from "./orderItem";
 
 export class Shipping {
     private readonly MIN_VALUE = parseFloat((10).toFixed(2));
-    private FACTOR = 100;
-    private total = 0;
+    private readonly FACTOR = 100;
+    public total = 0;
+    private readonly DISTANCE = 1000;
 
-    public addItem(item: Item, quantity: number, distance: number){
-        const shipping = item.getVolume() * distance * (item.getDensity()/this.FACTOR);
+    public addItem(item: Item, quantity: number){
+        const shipping = item.getVolume() * this.DISTANCE * (item.getDensity()/this.FACTOR);
         this.total += shipping * quantity;
     }
 

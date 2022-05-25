@@ -5,6 +5,7 @@ export class OrderItem {
 
 
     constructor(idItem: number, price: number, quantity: number) {
+        if (quantity < 0) throw new Error("Invalid quantity");
         this.idItem = idItem;
         this.price = price;
         this.quantity = quantity;

@@ -3,6 +3,7 @@ import { Coupon } from "./coupon";
 import { Shipping } from "./shipping";
 import { Item } from "./item";
 import { OrderItem } from './orderItem';
+import { OrderCode } from './orderCode';
 
 export class Order {
     private _cpf: Cpf;
@@ -10,19 +11,37 @@ export class Order {
     private _orderItemList: OrderItem[];
     private _discountCupon?: Coupon;
     shipping = new Shipping();
+    code: OrderCode;
 
-    constructor(cpf: string, date: Date = new Date()) {
+    constructor(cpf: string, date: Date = new Date(), readonly sequence = 1) {
         this._cpf = new Cpf(cpf);
         this._date = date;
         this._orderItemList = [];
+        this.code = new OrderCode(date, sequence);
     }
 
-    public get productList() {
+    public get orderItems() {
         return this._orderItemList;
     }
+
+    public set orderItems(orderItems: OrderItem[]) {
+        this._orderItemList = orderItems;
+    }
     
-    public get discountCupon() {
+    public get coupon(): Coupon | undefined {
         return this._discountCupon;
+    }
+
+    public set coupon(coupon: Coupon | undefined) {
+        this._discountCupon = coupon;
+    }
+
+    public get date() {
+        return this._date;
+    }
+
+    public set date(date: Date) {
+        this._date = date;
     }
 
     public get cpf() {
@@ -30,10 +49,15 @@ export class Order {
     }
 
     public addItem(item: Item, quantity: number) {
-        this.shipping.addItem(item, quantity, 1000);
+        if(this.isDuplicated(item)) throw new Error("Duplicated item");
+        this.shipping.addItem(item, quantity);
         const { idItem, price } = item;
         this._orderItemList.push(new OrderItem(idItem, price, quantity));
     }
+
+    private isDuplicated (item: Item) {
+		return this.orderItems.some(orderItem => orderItem.idItem === item.idItem);
+	}
 
     public addCoupon(coupon: Coupon) {
         if(!coupon.isExpired(this._date))
@@ -46,8 +70,8 @@ export class Order {
             return total;
         }, 0);
 
-        if(this.discountCupon) {
-            total -= this.discountCupon.calculateDiscount(total);
+        if(this.coupon) {
+            total -= this.coupon.calculateDiscount(total);
         }
 
         total += this.shipping.totalValue();
