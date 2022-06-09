@@ -1,9 +1,11 @@
+import { RepositoryFactory } from "../domain/factory/RepositoryFactory";
 import { OrderRepository } from "../domain/repository/OrderRepository";
 
 export class GetOrders {
+    private readonly orderRepository: OrderRepository;
     
-    constructor(readonly orderRepository: OrderRepository) {
-
+    constructor(readonly repositoryFactory: RepositoryFactory) {
+        this.orderRepository = repositoryFactory.createOrderRepository();
     }
 
     async execute() : Promise<Output[]> {
