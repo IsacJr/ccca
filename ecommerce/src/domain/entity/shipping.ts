@@ -1,5 +1,4 @@
 import { Item } from "./item";
-import { OrderItem } from "./orderItem";
 
 export class Shipping {
     private readonly MIN_VALUE = parseFloat((10).toFixed(2));

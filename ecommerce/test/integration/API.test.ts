@@ -4,18 +4,24 @@ import { RepositoryFactory } from "../../src/domain/factory/RepositoryFactory";
 import { OrderRepository } from "../../src/domain/repository/OrderRepository";
 import { IConnection } from "../../src/infra/database/IConnection";
 import { PgPromiseConnectionAdapter } from "../../src/infra/database/PgPromiseConnectionAdapter";
+import MemoryQueueAdapter from "../../src/infra/event/MemoryQueueAdapter";
+import Queue from "../../src/infra/event/Queue";
+import RabbitMQAdapter from "../../src/infra/event/RabbitMQAdapter";
 import { DatabaseRepositoryFactory } from "../../src/infra/factory/DatabaseRepositoryFactory";
 import OrderRepositoryDatabase from "../../src/infra/repository/database/OrderRepositoryDatabase";
 
 let connection: IConnection;
 let orderRepository: OrderRepository;
 let repositoryFactory: RepositoryFactory;
+let queue: Queue;
 
 beforeEach(async function () {
     connection = new PgPromiseConnectionAdapter();
 	repositoryFactory = new DatabaseRepositoryFactory(connection);
     orderRepository = new OrderRepositoryDatabase(connection);
     await orderRepository.clear();
+	queue = new MemoryQueueAdapter();
+	// queue = new RabbitMQAdapter()
 });
 
 test("It should call /items", async function () {
@@ -34,7 +40,7 @@ test("It should call /order", async function () {
 	// itemRepository.save(new Item(3, "Cabo", 30, new Dimension(10, 10, 10), 1));
 	// const couponRepository = new CouponRepositoryMemory();
 	// couponRepository.save(new Coupon("VALE20", 20, new Date("2021-03-10T10:00:00")));
-	const placeOrder = new PlaceOrder(repositoryFactory);
+	const placeOrder = new PlaceOrder(repositoryFactory, queue);
 	const input = {
 		cpf: "935.411.347-80",
 		orderItems: [
@@ -63,7 +69,7 @@ test.skip("It should call /orders/code", async function () {
 	// itemRepository.save(new Item(3, "Cabo", 30, new Dimension(10, 10, 10), 1));
 	// const couponRepository = new CouponRepositoryMemory();
 	// couponRepository.save(new Coupon("VALE20", 20, new Date("2021-03-10T10:00:00")));
-	const placeOrder = new PlaceOrder(repositoryFactory);
+	const placeOrder = new PlaceOrder(repositoryFactory, queue);
 	const input = {
 		cpf: "935.411.347-80",
 		orderItems: [
